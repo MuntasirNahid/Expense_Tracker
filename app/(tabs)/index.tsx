@@ -1,75 +1,241 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet, View, Text, FlatList } from "react-native";
+import { FAB } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useCallback, useEffect, useState } from "react";
+import { Cashbook } from "@/data/cashbooks";
+import { useRouter } from "expo-router";
+import {
+  initDB,
+  insertCashbook,
+  getTotalIncomeAndSpentAmount,
+  fetchCashbooksWithBalance,
+  renameCashbookName,
+  deleteCashbookById,
+} from "@/utills/db";
+import { useFocusEffect } from "@react-navigation/native";
+import CashbookItem from "@/components/CashbookItem";
+import { ModalView } from "@/components/ModalView";
+import { ProfileCard } from "@/components/ProfileCard";
+import { IncomeSpentCard } from "@/components/IncomeSpentCard";
 
 export default function HomeScreen() {
+  const [visibleMenuId, setVisibleMenuId] = useState<number | null>(null);
+  const [renameModalVisible, setRenameModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [cashbooks, setCashbooks] = useState<Cashbook[]>([]);
+  const [cashbookToModify, setCashbookToModify] = useState<Cashbook | null>(
+    null
+  );
+  const [newName, setNewName] = useState("");
+  const [newCashbook, setNewCashbook] = useState("");
+  const [income, setIncome] = useState(1);
+  const [spent, setSpent] = useState(1);
+  const router = useRouter();
+
+  useFocusEffect(
+    useCallback(() => {
+      const fetch = async () => {
+        const allBooks = await fetchCashbooksWithBalance();
+        setCashbooks(allBooks);
+        const { totalIncome, totalSpent } =
+          await getTotalIncomeAndSpentAmount();
+        setIncome(totalIncome);
+        setSpent(totalSpent);
+      };
+      fetch();
+    }, [])
+  );
+
+  useEffect(() => {
+    const setup = async () => {
+      await initDB();
+    };
+    setup();
+  }, []);
+
+  const actions = [
+    {
+      icon: "message-text",
+      label: "Chat",
+      onPress: () => {
+        console.log("Going to chat screen");
+        router.push("/test");
+      },
+    },
+    {
+      icon: "plus",
+      label: "Add New Cashbook",
+      onPress: () => setModalVisible(true),
+    },
+  ];
+
+  const handleItemPress = (item: number) => {
+    router.push(`/CashbookItems/${item}`);
+  };
+
+  const handleInsertNewCashbook = async () => {
+    await insertCashbook(newCashbook);
+    const updatedCashbooks = await fetchCashbooksWithBalance();
+    setCashbooks(updatedCashbooks);
+    setNewCashbook("");
+    setModalVisible(false);
+  };
+
+  const handleRenameCashbook = async () => {
+    await renameCashbookName({
+      name: newName,
+      id: cashbookToModify!.id,
+    });
+    const allBooks = await fetchCashbooksWithBalance();
+    setCashbooks(allBooks);
+    setRenameModalVisible(false);
+    setVisibleMenuId(null);
+    setCashbookToModify(null);
+  };
+
+  const handleDeleteCashbook = async () => {
+    await deleteCashbookById({
+      id: cashbookToModify!.id,
+    });
+    const allBooks = await fetchCashbooksWithBalance();
+    setCashbooks(allBooks);
+    setDeleteModalVisible(false);
+    setCashbookToModify(null);
+  };
+
+  const renderItem = ({ item }: { item: Cashbook }) => {
+    return (
+      <CashbookItem
+        item={item}
+        visibleMenuId={visibleMenuId}
+        onPress={() => handleItemPress(item.id)}
+        onRename={() => {
+          setCashbookToModify(item);
+          setNewName(item.name);
+          setRenameModalVisible(true);
+          setVisibleMenuId(item.id);
+        }}
+        onDelete={() => {
+          setCashbookToModify(item);
+          setDeleteModalVisible(true);
+          setVisibleMenuId(null);
+        }}
+      />
+    );
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={cashbooks}
+        renderItem={renderItem}
+        keyExtractor={(cashbook) => cashbook.id.toString()}
+        ListHeaderComponent={
+          <>
+            {/* Profile Card */}
+            <ProfileCard />
+
+            {/* Income /Spent Card */}
+            <IncomeSpentCard
+              labelIn="Total Income"
+              labelOut="Total Spent"
+              amountIn={income}
+              amountOut={spent}
+            />
+
+            <View style={{ height: 30, paddingTop: 8 }}>
+              <Text style={{ color: "black" }}>Your Books</Text>
+            </View>
+          </>
+        }
+      />
+
+      {/* Floating Action Button  */}
+      <FAB.Group
+        open={fabOpen}
+        visible={true}
+        icon={fabOpen ? "close" : "plus"}
+        color="black"
+        actions={actions}
+        onStateChange={({ open }) => setFabOpen(open)}
+        onPress={() => {}}
+        fabStyle={styles.fab}
+      />
+
+      {/* Modal To Insert New Cashbook */}
+      <ModalView
+        visible={modalVisible}
+        modalHeader="Create new Cashbook"
+        isTextInputAvailable={true}
+        placeHolderText="Enter Cashbook Name"
+        textInputValue={newCashbook}
+        textInputOnChangeText={setNewCashbook}
+        onPressCancel={() => setModalVisible(false)}
+        onPressSave={handleInsertNewCashbook}
+        onRequestClose={() => setModalVisible(false)}
+      />
+
+      {/* Modal To Rename Cashbook */}
+      <ModalView
+        visible={renameModalVisible}
+        modalHeader="Rename Cashbook"
+        isTextInputAvailable={true}
+        placeHolderText="Enter Cashbook Name"
+        textInputValue={newName}
+        textInputOnChangeText={setNewName}
+        onPressCancel={() => {
+          setRenameModalVisible(false);
+          setVisibleMenuId(null);
+          setCashbookToModify(null);
+        }}
+        onPressSave={handleRenameCashbook}
+        onRequestClose={() => setRenameModalVisible(false)}
+      />
+
+      {/* Modal to Delete Cashbook */}
+      <ModalView
+        visible={deleteModalVisible}
+        modalHeader={`Are You Sure You Want To Delete ${cashbookToModify?.name} Cashbook?`}
+        isTextInputAvailable={false}
+        placeHolderText=""
+        textInputValue=""
+        textInputOnChangeText={() => {}}
+        onPressCancel={() => {
+          setDeleteModalVisible(false);
+          setCashbookToModify(null);
+        }}
+        onPressSave={handleDeleteCashbook}
+        onRequestClose={() => setDeleteModalVisible(false)}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#f4f6f9",
+    paddingHorizontal: 12,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+
+  // --- Reusable Layout ---
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+
+  alignCenter: {
+    alignItems: "center",
+  },
+
+  // --- FAB ---
+  fab: {
+    position: "absolute",
+    right: 16,
+    bottom: 16,
+    backgroundColor: "#fbd203",
+    borderRadius: 28,
   },
 });
