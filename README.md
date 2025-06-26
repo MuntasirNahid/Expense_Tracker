@@ -1,50 +1,68 @@
-# Welcome to your Expo app 👋
+# 💰 Expense Tracker App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An easy-to-use **Expense Tracker** built with **React Native** and **Expo**, powered by **SQLite** for offline data storage. This app helps you manage multiple cashbooks, track transactions, and visualize your financial status — all in one place.
 
-## Get started
+---
 
-1. Install dependencies
+## 🚀 Features
+
+- 🧾 **Dashboard Overview**
+  - View total cash-in and cash-out across all cashbooks.
+  - Get a visual summary of profit/loss status for each cashbook.
+
+- 📒 **Cashbook Management**
+  - Create new cashbooks for different purposes or accounts.
+  - Rename or delete existing cashbooks easily.
+
+- 💸 **Transaction Management**
+  - Add income (cash in) or expense (cash out) entries.
+  - View a filtered dashboard specific to a single cashbook.
+
+- 📊 **Visual Insights**
+  - Instantly understand the financial health of each cashbook with simple and clear visuals.
+  - Track performance trends at a glance.
+
+---
+
+## 🛠️ Tech Stack
+
+- ⚛️ **React Native** – Cross-platform mobile development
+- ⚡ **Expo** – Streamlined development and deployment
+- 🗄️ **SQLite** – Local, persistent storage for offline access
+- 🎨 **React Native Paper** – UI components for better design
+
+---
+
+## 📷 Screenshots
+
+---
+
+## 📷 Video
+
+## 📦 Installation & Running Locally
+
+1. **Clone the repository**
 
    ```bash
-   npm install
-   ```
+   git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name
 
-2. Start the app
+2. **Install dependencies**
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+  ```bash
+  npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+3. **Start the Expo development server**
 
-## Learn more
+```bash
+npx expo start
+```
+4. **Run the app**
+   
+   Use the Expo Go app on your phone to scan the QR code.
+   Or, launch an emulator via Android Studio.
 
-To learn more about developing your project with Expo, look at the following resources:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🧠 Learnings & Motivation
+This project was built as a part of my React Native learning journey. After transitioning from Flutter, I wanted to create something practical from scratch to strengthen my skills. Working on this app helped me understand key concepts like navigation, modals, state management, reusable components, and SQLite integration in a real-world context.
