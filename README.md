@@ -34,10 +34,13 @@ An easy-to-use **Expense Tracker** built with **React Native** and **Expo**, pow
 ---
 
 ## 📷 Screenshots
-
+![Image](https://github.com/user-attachments/assets/3d21f1db-06ea-447b-a391-468e5b6f281f)
 ---
 
 ## 📷 Video
+Watch a short demo on [YouTube](https://youtube.com/shorts/s97uQs2_lgQ?feature=share)!
+
+
 
 ## 📦 Installation & Running Locally
 
@@ -65,4 +68,4 @@ npx expo start
 
 
 ## 🧠 Learnings & Motivation
-This project was built as a part of my React Native learning journey. After transitioning from Flutter, I wanted to create something practical from scratch to strengthen my skills. Working on this app helped me understand key concepts like navigation, modals, state management, reusable components, and SQLite integration in a real-world context.
+This project was built as a part of my React Native learning journey. After transitioning from Flutter, I wanted to create something practical from scratch to strengthen my skills. Working on this app helped me understand key concepts like navigation, modals,reusable components, and SQLite integration in a real-world context.
